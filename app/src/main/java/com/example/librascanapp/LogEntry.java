@@ -2,16 +2,16 @@ package com.example.librascanapp;
 
 public class LogEntry {
 
-    private String logID;
-    private String timestamp;
+    private String logID, timestamp, purpose;
 
     public LogEntry(){
 
     }
 
-    public LogEntry(String logID, String timestamp){
+    public LogEntry(String logID, String timestamp, String purpose){
         this.logID = logID;
         this.timestamp = timestamp;
+        this.purpose = purpose;
     }
 
     public String getLogID(){
@@ -21,4 +21,5 @@ public class LogEntry {
     public String getTimestamp(){
         return timestamp;
     }
+    public String getPurpose(){return purpose;}
 }

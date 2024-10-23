@@ -35,7 +35,7 @@ public class LogsActivity extends AppCompatActivity {
             return insets;
         });
 
-        logsTable = findViewById(R.id.table);
+        logsTable = findViewById(R.id.logsTable);
 
         FirebaseDatabase.getInstance().getReference("logs")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -45,12 +45,13 @@ public class LogsActivity extends AppCompatActivity {
                             for (DataSnapshot logSnapshot : snapshot.getChildren()){
                                 String studentId = logSnapshot.child("logID").getValue(String.class);
                                 String timestamp = logSnapshot.child("timestamp").getValue(String.class);
+                                String purpose = logSnapshot.child("purpose").getValue(String.class);
 
                                 String[] dateTime = timestamp.split(" ");
                                 String date = dateTime[0];
                                 String time = dateTime[1];
 
-                                fetchLogsData(studentId,date, time);
+                                fetchLogsData(studentId,date, time, purpose);
                             }
                         }
                     }
@@ -62,7 +63,7 @@ public class LogsActivity extends AppCompatActivity {
                 });
     }
 
-    private void fetchLogsData(String studentID, String date, String time){
+    private void fetchLogsData(String studentID, String date, String time, String purpose){
         FirebaseDatabase.getInstance().getReference("Students").child(studentID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -73,7 +74,7 @@ public class LogsActivity extends AppCompatActivity {
                             String courseYr = snapshot.child("courseYr").getValue(String.class);
                             String department = snapshot.child("department").getValue(String.class);
 
-                            addTableRow(id, name, courseYr, department,date, time);
+                            addTableRow(id, name, courseYr, department,date, time, purpose);
                         }else {
                             Toast.makeText(LogsActivity.this, "Student not found!", Toast.LENGTH_SHORT).show();
                         }
@@ -86,7 +87,7 @@ public class LogsActivity extends AppCompatActivity {
                 });
     }
 
-    private void addTableRow(String id, String name, String courseYr, String department, String date, String time){
+    private void addTableRow(String id, String name, String courseYr, String department, String date, String time, String purpose){
         TableRow tableRow = new TableRow(this);
         tableRow.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
@@ -96,6 +97,7 @@ public class LogsActivity extends AppCompatActivity {
         tableRow.addView(createTextView(department));
         tableRow.addView(createTextView(date));
         tableRow.addView(createTextView(time));
+        tableRow.addView(createTextView(purpose));
 
         logsTable.addView(tableRow);
     }

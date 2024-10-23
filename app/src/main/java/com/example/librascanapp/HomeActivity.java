@@ -66,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         studentID = getIntent().getStringExtra("StudentId");
         if (studentID == null || studentID.isEmpty()) {
             Toast.makeText(HomeActivity.this, "Student ID is missing", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         FirebaseDatabase.getInstance().getReference("Students").child(studentID)
@@ -96,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
         purpose = findViewById(R.id.spinner);
 
         purposeOption = new ArrayList<>();
-        purposeOption.add("Purpose of Visit:");
+        purposeOption.add("Select Here:");
         purposeOption.add("Study");
         purposeOption.add("Research");
 
@@ -110,6 +111,7 @@ public class HomeActivity extends AppCompatActivity {
                 selectedPurpose = parent.getItemAtPosition(position).toString();
                 if (position == 0){
                     Toast.makeText(HomeActivity.this, "Please Select Purpose of Visit", Toast.LENGTH_SHORT).show();
+                    return;
                 }else {
                     Toast.makeText(HomeActivity.this, "Purpose of Visit: "+selectedPurpose, Toast.LENGTH_SHORT).show();
                 }
@@ -130,6 +132,10 @@ public class HomeActivity extends AppCompatActivity {
                             Toast.makeText(HomeActivity.this, "Home Selected", Toast.LENGTH_SHORT).show();
                             return true;
                         } else if (item.getItemId() == R.id.qr_scanner) {
+                            if (selectedPurpose.equals("Select Here:")){
+                                Toast.makeText(HomeActivity.this, "Please Select purpose of visit", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
                             initiateQRScan();  // Launch QR scanner
                             return true;
                         } else if (item.getItemId() == R.id.info) {
@@ -175,7 +181,7 @@ public class HomeActivity extends AppCompatActivity {
 
         // Create a log entry with user ID and timestamp
         String timestamp = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault()).format(new Date());
-        LogEntry logEntry = new LogEntry(studentID, timestamp);
+        LogEntry logEntry = new LogEntry(studentID, timestamp, selectedPurpose);
 
         logsRef.child(studentID).setValue(logEntry)
                 .addOnSuccessListener(aVoid -> Toast.makeText(this, "Log submitted successfully", Toast.LENGTH_SHORT).show())
